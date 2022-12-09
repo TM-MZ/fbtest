@@ -2,43 +2,41 @@
   <div class="login">
     <div>
       <button @click="login">googleアカウントでログイン</button>
-      <p v-if="isAuth">{{name}}</p>
-
+      <p v-if="isAuth">{{ name }}</p>
     </div>
   </div>
 </template>
 
 <script>
-import {getAuth,GoogleAuthProvider,signInWithPopup} from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 export default {
-  data(){
+  data() {
     return {
-      name:"",
-      email:"",
-      isAuth:false
-
-    }
+      name: "",
+      email: "",
+      isAuth: false,
+    };
   },
-  methods:{
-    async login(){
-      const auth=getAuth();
+  methods: {
+    async login() {
+      const auth = getAuth();
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth,provider).then((user)=>{
-        if(user){
-          if (!this.isAuth){
-            this.isAuth=true;
+      await signInWithPopup(auth, provider).then((user) => {
+        if (user) {
+          if (!this.isAuth) {
+            this.isAuth = true;
           }
-          this.name="user.displayName";
-          this.email="user.email";
-          $router.replace('/confirm');
-        }else{
+          this.name = user.displayName;
+          this.email = user.email;
+        } else {
           alert(ログインできませんでした);
+          return;
         }
-      })
-
-    }
-  }
-}
+      });
+      $router.replace("/confirm");
+    },
+  },
+};
 </script>
 <style scoped>
 .login {
