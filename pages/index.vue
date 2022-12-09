@@ -2,6 +2,8 @@
   <div class="login">
     <div>
       <button @click="login">googleアカウントでログイン</button>
+      <p v-if="isAuth">{{name}}</p>
+
     </div>
   </div>
 </template>
@@ -11,10 +13,9 @@ import {getAuth,GoogleAuthProvider,signInWithPopup} from 'firebase/auth';
 export default {
   data(){
     return {
-      user:{
       name:"",
       email:"",
-      }
+      isAuth:false
 
     }
   },
@@ -24,9 +25,12 @@ export default {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth,provider).then((user)=>{
         if(user){
+          if (!this.isAuth){
+            this.isAuth=true;
+          }
           this.name="user.displayName";
           this.email="user.email";
-          $router.push({name:'/confirm',params:this.user});
+          $router.replace('/confirm');
         }else{
           alert(ログインできませんでした);
         }
