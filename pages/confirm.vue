@@ -1,20 +1,22 @@
 <template>
   <div class="confirm">
-    <div>
+    <div v-if="isAuth">
       <h1>ログイン完了！！</h1>
-      <p>{{name}}</p>
-      <p>{{email}}</p>
+      <p>{{ name }}</p>
+      <p>{{ email }}</p>
+      <button @click="logout">ログアウトする</button>
     </div>
   </div>
 </template>
 
 <script>
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 export default {
   data() {
     return {
-      name: "a",
-      email: "a",
+      isAuth: false,
+      name: "",
+      email: "",
     };
   },
   methods: {
@@ -24,9 +26,18 @@ export default {
         if (user) {
           this.name = user.displayName;
           this.email = user.email;
-        }else{
-            $router.replace('/');
+          this.isAuth=true;
+        } else {
+          this.$router.replace("/");
         }
+      });
+    },
+    logout() {
+      const auth = getAuth();
+      signOut(auth).then(() => {
+        alert("ログアウトしました");
+        this.isAuth = false;
+        this.$router.replace("/");
       });
     },
   },
